@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	   					   http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	  <property name="location">
+	    <value>file:database.properties</value>
+	  </property>
+	  <property name="searchSystemEnvironment" value="true"></property>
+	  <property name="fileEncoding" value="UTF-8" />
+	  <property name="ignoreResourceNotFound" value="false"/>
+	</bean>
+
+	
+	<!-- Tip数据库 -->
+	<bean id="dataSource"
+		class="oracle.jdbc.pool.OracleDataSource">
+		<property name="URL" value="${tipdb.url}" />
+		<property name="user" value="${tipdb.username}" />
+		<property name="password" value="${tipdb.password}" />
+		<property name="connectionCachingEnabled" value="true" />
+		<property name="connectionCacheProperties">
+	      <value>	
+			MinLimit:1
+			MaxLimit:5
+			InitialLimit:1
+			ConnectionWaitTimeout:120
+			InactivityTimeout:180
+			ValidateConnection:true
+	      </value>
+	    </property>
+	</bean>
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+</beans>
